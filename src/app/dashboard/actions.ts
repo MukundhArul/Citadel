@@ -14,7 +14,7 @@ export async function addVaultItem(data: any) {
     return { error: 'Not authenticated' }
   }
 
-  const { error } = await supabase.from('vault_items').insert({
+  const { data: item, error } = await supabase.from('vault_items').insert({
     user_id: user.id,
     encrypted_title: data.encryptedTitle.ciphertext,
     title_iv: data.encryptedTitle.iv,
@@ -27,7 +27,7 @@ export async function addVaultItem(data: any) {
     encrypted_notes: data.encryptedNotes?.ciphertext || null,
     notes_iv: data.encryptedNotes?.iv || null,
     folder_id: data.folderId || null,
-  })
+  }).select().single()
 
   if (error) {
     console.error('Insert error:', error)
@@ -35,7 +35,7 @@ export async function addVaultItem(data: any) {
   }
 
   revalidatePath('/dashboard')
-  return { success: true }
+  return { success: true, item }
 }
 
 export async function addVaultFolder(data: any) {

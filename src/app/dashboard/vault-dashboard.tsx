@@ -252,7 +252,7 @@ export default function VaultDashboard({ userId, initialItems, initialFolders }:
       if (res.error) throw new Error(res.error)
 
       setDecryptedItems([{
-        id: crypto.randomUUID(), // Optimistic ID
+        id: res.item.id, // Real database ID
         title: newRecord.title,
         username: newRecord.username,
         password: newRecord.password,
