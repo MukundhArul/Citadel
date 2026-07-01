@@ -42,7 +42,7 @@ export default async function DashboardPage() {
               MISSION CONTROL
             </h1>
           </div>
-          <div className="text-xs text-sci-green tracking-[0.2em] mt-1 uppercase">
+          <div className="text-xs text-sci-amber-light tracking-[0.2em] mt-1 uppercase">
             OPERATOR: {user.email}
           </div>
         </div>

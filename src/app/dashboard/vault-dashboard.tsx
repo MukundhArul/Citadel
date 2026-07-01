@@ -376,8 +376,8 @@ export default function VaultDashboard({ userId, initialItems, initialFolders }:
 
         {/* Add Folder Form */}
         {isAddingFolder && (
-          <form onSubmit={handleAddFolder} className="flex flex-col gap-3 border border-sci-green bg-surface p-4 rounded-sm" style={{ boxShadow: "0 0 15px rgba(0, 237, 63, 0.1)" }}>
-            <h3 className="font-mono text-sci-green text-xs tracking-widest uppercase">CREATE FOLDER:</h3>
+          <form onSubmit={handleAddFolder} className="flex flex-col gap-3 border border-sci-blue bg-surface p-4 rounded-sm" style={{ boxShadow: "0 0 15px rgba(68, 102, 204, 0.1)" }}>
+            <h3 className="font-mono text-sci-blue text-xs tracking-widest uppercase">CREATE FOLDER:</h3>
             <Input placeholder="FOLDER NAME" className="w-full text-xs" value={newFolderName} onChange={e => setNewFolderName(e.target.value)} required />
             <div className="flex gap-2">
               <Button type="button" variant="ghost" size="sm" className="flex-1" onClick={() => setIsAddingFolder(false)}>
