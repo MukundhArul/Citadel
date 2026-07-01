@@ -36,6 +36,9 @@ export async function signup(formData: FormData) {
   const { data: authData, error } = await supabase.auth.signUp(data)
 
   if (error) {
+    if (error.message.toLowerCase().includes('already registered') || error.message.toLowerCase().includes('already exists')) {
+      redirect(`/login?error=${encodeURIComponent('VAULT ALREADY EXISTS. PLEASE DECRYPT EXISTING VAULT (LOGIN).')}`)
+    }
     redirect(`/login?error=${encodeURIComponent(error.message)}`)
   }
 
