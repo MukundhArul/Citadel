@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { deriveKey, decryptText, encryptText } from '@/lib/crypto'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Grid } from '@/components/ui/grid'
+import { StatCard } from '@/components/ui/stat-card'
 import { addVaultItem, addVaultFolder, deleteVaultItem, updateVaultItem } from './actions'
 
 function VaultItemCard({ 
@@ -361,9 +363,43 @@ export default function VaultDashboard({ userId, initialItems, initialFolders }:
     ? decryptedItems 
     : decryptedItems.filter(item => item.folder_id === activeFolderId)
 
+  // Calculate statistics
+  const passwordOccurrences = decryptedItems.filter(item => item.password).map(i => i.password)
+  const duplicatesSet = new Set(passwordOccurrences.filter((item, index) => passwordOccurrences.indexOf(item) !== index))
+  const duplicateRecordsCount = decryptedItems.filter(item => item.password && duplicatesSet.has(item.password)).length
+
   return (
-    <div className="flex flex-col md:flex-row gap-8 w-full">
-      {/* Sidebar Navigation */}
+    <div className="flex flex-col gap-8 w-full">
+      {/* Top Stats Grid */}
+      <Grid preset="4-col" gap="1rem">
+        <StatCard 
+          label="VAULT STATUS" 
+          value="SECURE" 
+          variant="ACTIVE" 
+          sublabel="SYSTEM NOMINAL" 
+        />
+        <StatCard 
+          label="TOTAL RECORDS" 
+          value={decryptedItems.length} 
+          variant="DEFAULT" 
+          sublabel="ENCRYPTED ENTRIES" 
+        />
+        <StatCard 
+          label="DIRECTORIES" 
+          value={decryptedFolders.length} 
+          variant="DEFAULT"
+          sublabel="ACTIVE FOLDERS" 
+        />
+        <StatCard 
+          label="PASSWORD REUSE" 
+          value={duplicateRecordsCount} 
+          variant={duplicateRecordsCount > 0 ? "CRITICAL" : "ACTIVE"} 
+          sublabel={duplicateRecordsCount > 0 ? "DUPLICATE PASSWORDS" : "ZERO DUPLICATES"} 
+        />
+      </Grid>
+
+      <div className="flex flex-col md:flex-row gap-8 w-full">
+        {/* Sidebar Navigation */}
       <div className="w-full md:w-64 flex flex-col gap-6 flex-shrink-0">
         <div className="flex flex-col gap-2">
           <Button variant="exec" onClick={() => setIsAddingItem(true)} disabled={isAddingItem}>
@@ -472,6 +508,7 @@ export default function VaultDashboard({ userId, initialItems, initialFolders }:
         </div>
 
       </div>
+    </div>
     </div>
   )
 }
