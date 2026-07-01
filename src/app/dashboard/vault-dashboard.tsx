@@ -213,9 +213,18 @@ export default function VaultDashboard({ userId, initialItems, initialFolders }:
   return (
     <div className="flex flex-col md:flex-row gap-8 w-full">
       {/* Sidebar Navigation */}
-      <div className="w-full md:w-64 flex flex-col gap-4 flex-shrink-0">
+      <div className="w-full md:w-64 flex flex-col gap-6 flex-shrink-0">
         <div className="flex flex-col gap-2">
-          <div className="text-xs font-mono text-text-muted tracking-widest uppercase mb-2">DIRECTORY</div>
+          <Button variant="exec" onClick={() => setIsAddingItem(true)} disabled={isAddingItem}>
+            + NEW RECORD
+          </Button>
+          <Button variant="info" onClick={() => setIsAddingFolder(true)} disabled={isAddingFolder}>
+            + NEW FOLDER
+          </Button>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <div className="text-xs font-mono text-text-muted tracking-widest uppercase mb-2 border-b border-border pb-2">DIRECTORY</div>
           
           <select 
             className="flex h-11 w-full border border-border bg-surface px-3 py-2 text-[0.875rem] font-mono text-sci-blue uppercase focus-visible:outline-none focus-visible:border-sci-green transition-colors rounded-sm cursor-pointer"
@@ -225,15 +234,6 @@ export default function VaultDashboard({ userId, initialItems, initialFolders }:
             <option value="all">ALL RECORDS</option>
             {decryptedFolders.map(f => <option key={f.id} value={f.id}>📁 {f.name}</option>)}
           </select>
-        </div>
-
-        <div className="flex flex-col gap-2 mt-4">
-          <Button variant="info" onClick={() => setIsAddingFolder(true)} disabled={isAddingFolder}>
-            + NEW FOLDER
-          </Button>
-          <Button variant="exec" onClick={() => setIsAddingItem(true)} disabled={isAddingItem}>
-            + NEW RECORD
-          </Button>
         </div>
 
         {/* Add Folder Form */}
