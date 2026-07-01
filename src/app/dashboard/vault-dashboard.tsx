@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Grid } from '@/components/ui/grid'
 import { StatCard } from '@/components/ui/stat-card'
+import { Spinner } from '@/components/ui/spinner'
+import { Logo } from '@/components/ui/logo'
 import { addVaultItem, addVaultFolder, deleteVaultItem, updateVaultItem } from './actions'
 import zxcvbn from 'zxcvbn'
 
@@ -104,7 +106,17 @@ function VaultItemCard({
   )
 }
 
-export default function VaultDashboard({ userId, initialItems, initialFolders }: { userId: string, initialItems: any[], initialFolders: any[] }) {
+export default function VaultDashboard({ 
+  userId, 
+  userEmail,
+  initialItems,
+  initialFolders
+}: { 
+  userId: string, 
+  userEmail: string,
+  initialItems: any[],
+  initialFolders: any[]
+}) {
   const [masterPassword, setMasterPassword] = useState('')
   const [cryptoKey, setCryptoKey] = useState<CryptoKey | null>(null)
   const [error, setError] = useState('')
@@ -376,9 +388,15 @@ export default function VaultDashboard({ userId, initialItems, initialFolders }:
                 [ALERT]: {error}
               </div>
             )}
-            <Button type="submit" variant="warning" disabled={isDecrypting}>
-              {isDecrypting ? 'DECRYPTING...' : 'DECRYPT VAULT'}
-            </Button>
+            {isDecrypting ? (
+              <div className="py-4">
+                <Spinner label="DECRYPTING VAULT..." />
+              </div>
+            ) : (
+              <Button type="submit" variant="exec" className="w-full">
+                INITIALIZE DECRYPTION
+              </Button>
+            )}
           </form>
         </div>
       </div>
@@ -396,6 +414,30 @@ export default function VaultDashboard({ userId, initialItems, initialFolders }:
 
   return (
     <div className="flex flex-col gap-8 w-full">
+      <header className="flex justify-between items-end mb-4 border-b border-border pb-4">
+        <div>
+          <div className="flex items-center gap-3">
+            <Logo className="w-6 h-6 text-sci-green" />
+            <h1 className="font-mono text-2xl font-bold text-sci-green tracking-widest uppercase" style={{ textShadow: "var(--text-glow-green)" }}>
+              MISSION CONTROL
+            </h1>
+          </div>
+          <div className="text-xs text-sci-amber-light tracking-[0.2em] mt-1 uppercase">
+            OPERATOR: {userEmail}
+          </div>
+        </div>
+        <div className="flex flex-col items-end gap-3">
+          <form action="/auth/signout" method="post">
+            <button type="submit" className="text-xs font-mono text-sci-bone hover:text-sci-red transition-colors tracking-widest uppercase">
+              [ TERMINATE SESSION ]
+            </button>
+          </form>
+          <button onClick={handleExportData} className="text-xs font-mono text-sci-amber hover:text-sci-amber-light transition-colors tracking-widest uppercase">
+            [ EXPORT DECRYPTED DATA ]
+          </button>
+        </div>
+      </header>
+
       {/* Top Stats Grid */}
       <Grid preset="4-col" gap="1rem">
         <StatCard 
@@ -463,12 +505,6 @@ export default function VaultDashboard({ userId, initialItems, initialFolders }:
             <option value="all">ALL RECORDS</option>
             {decryptedFolders.map(f => <option key={f.id} value={f.id}>📁 {f.name}</option>)}
           </select>
-        </div>
-
-        <div className="mt-4 pt-4 border-t border-border flex flex-col gap-2">
-          <Button variant="ghost" onClick={handleExportData} className="w-full text-xs text-sci-amber border border-transparent hover:border-sci-amber">
-            [ EXPORT DECRYPTED DATA ]
-          </Button>
         </div>
       </div>
 

@@ -34,26 +34,7 @@ export default async function DashboardPage() {
 
   return (
     <main className="flex-1 flex flex-col p-8 max-w-5xl mx-auto w-full">
-      <header className="flex justify-between items-center mb-12 border-b border-border pb-4">
-        <div>
-          <div className="flex items-center gap-3">
-            <Logo className="w-6 h-6 text-sci-green" />
-            <h1 className="font-mono text-2xl font-bold text-sci-green tracking-widest uppercase" style={{ textShadow: "var(--text-glow-green)" }}>
-              MISSION CONTROL
-            </h1>
-          </div>
-          <div className="text-xs text-sci-amber-light tracking-[0.2em] mt-1 uppercase">
-            OPERATOR: {user.email}
-          </div>
-        </div>
-        <form action="/auth/signout" method="post">
-          <button type="submit" className="text-xs font-mono text-sci-bone hover:text-sci-red transition-colors tracking-widest uppercase">
-            [ TERMINATE SESSION ]
-          </button>
-        </form>
-      </header>
-
-      <VaultDashboard userId={user.id} initialItems={items || []} initialFolders={folders || []} />
+      <VaultDashboard userId={user.id} userEmail={user.email} initialItems={items || []} initialFolders={folders || []} />
     </main>
   )
 }

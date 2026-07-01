@@ -1,5 +1,6 @@
 import { login, signup } from './actions'
 import { Button } from '@/components/ui/button'
+import { SubmitButton } from './submit-button'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 
@@ -55,18 +56,18 @@ export default async function LoginPage({
           <div className="flex gap-4 mt-4">
             {mode === 'register' ? (
               <>
-                <Button formAction={signup} variant="info" className="flex-1">
+                <SubmitButton formAction={signup} variant="info" className="flex-1" loadingLabel="INITIALIZING...">
                   INITIALIZE VAULT
-                </Button>
+                </SubmitButton>
                 <Button formAction={login} variant="ghost" className="flex-1 border border-transparent">
                   LOGIN INSTEAD
                 </Button>
               </>
             ) : (
               <>
-                <Button formAction={login} variant="exec" className="flex-1">
+                <SubmitButton formAction={login} variant="exec" className="flex-1" loadingLabel="AUTHENTICATING...">
                   DECRYPT VAULT
-                </Button>
+                </SubmitButton>
                 <Button formAction={signup} variant="ghost" className="flex-1 border border-transparent">
                   NEW VAULT
                 </Button>
