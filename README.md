@@ -2,7 +2,8 @@
 
 Citadel is a secure, zero-knowledge password manager built with modern web technologies and a retro sci-fi aesthetic. 
 
-![Citadel Dashboard](https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1200)
+![Citadel Login](public/image.png)
+![Citadel Dashboard](public/screenshot.png)
 
 ## 🔒 Zero-Knowledge Architecture
 
@@ -52,9 +53,11 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to enter the
 
 ## 🗂 Features
 * **Zero-Knowledge Encryption:** End-to-end client-side encryption.
+* **Operator Audit Logs:** Real-time tracking of your encrypted vault activity via a retro terminal UI.
+* **Password Diagnostics:** Visual indicators for password strength and reuse warnings across your vault.
+* **Dynamic Grid Interface:** Click any record to seamlessly expand it within a dense, masonry-like grid powered by smooth layout animations.
 * **Folder Management:** Organize credentials seamlessly into encrypted folders.
-* **One-Click Reveal:** Quickly view and hide your stored passwords.
-* **Mission Control Dashboard:** A fully responsive, retro-styled interface designed for rapid operations.
+* **One-Click Actions:** Quickly copy credentials or view hidden passwords securely.
 
 ## 🛡 Security Note
 If you lose your Master Password, **your vault cannot be recovered**. The architecture is specifically designed to prevent decryption without the local derivation key.
