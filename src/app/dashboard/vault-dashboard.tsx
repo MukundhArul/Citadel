@@ -1,12 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
 import { deriveKey, decryptText, encryptText } from '@/lib/crypto'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Grid } from '@/components/ui/grid'
 import { StatCard } from '@/components/ui/stat-card'
 import { Logo } from '@/components/ui/logo'
+import { AuditLog } from '@/components/ui/audit-log'
 import { addVaultItem, addVaultFolder, deleteVaultItem, updateVaultItem } from './actions'
 import zxcvbn from 'zxcvbn'
 
@@ -14,17 +16,28 @@ function VaultItemCard({
   item, 
   onDelete, 
   onUpdate,
-  folders
+  folders,
+  isExpanded,
+  onToggleExpand
 }: { 
   item: any, 
   onDelete: (id: string) => void,
   onUpdate: (id: string, updatedRecord: any) => Promise<void>,
-  folders: any[]
+  folders: any[],
+  isExpanded: boolean,
+  onToggleExpand: () => void
 }) {
   const [revealed, setRevealed] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [copiedField, setCopiedField] = useState<'username' | 'password' | null>(null)
+  
+  const handleCopy = (field: 'username' | 'password', text: string) => {
+    navigator.clipboard.writeText(text)
+    setCopiedField(field)
+    setTimeout(() => setCopiedField(null), 2000)
+  }
   
   const [editRecord, setEditRecord] = useState({
     title: item.title,
@@ -68,40 +81,81 @@ function VaultItemCard({
   }
 
   return (
-    <div className="border border-border bg-surface p-4 flex flex-col gap-2 hover:border-sci-green transition-colors group relative rounded-sm">
+    <motion.div 
+      layout
+      onClick={() => !isEditing && onToggleExpand()}
+      className={`border border-border bg-surface p-4 flex flex-col gap-2 hover:border-sci-green transition-all duration-300 group relative rounded-sm cursor-pointer ${
+        isExpanded ? 'md:col-span-2 row-span-2 shadow-[0_0_15px_rgba(0,237,63,0.15)] border-sci-green' : ''
+      }`}
+    >
       <div className="flex justify-between items-start mb-1 gap-2">
-        <div className="font-mono text-sm font-bold text-sci-bone tracking-wider uppercase truncate group-hover:text-sci-green transition-colors">
+        <div className={`font-mono text-sm font-bold text-sci-bone tracking-wider uppercase group-hover:text-sci-green transition-colors ${isExpanded ? 'break-all whitespace-normal' : 'truncate'}`}>
           {item.title}
         </div>
         
         <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button onClick={() => setIsEditing(true)} className="text-[10px] text-sci-amber hover:text-white transition-colors">[EDIT]</button>
+          <button onClick={(e) => { e.stopPropagation(); setIsEditing(true); }} className="text-[10px] text-sci-amber hover:text-white transition-colors">[EDIT]</button>
           {isDeleting ? (
             <div className="flex gap-1 items-center bg-red-950/50 px-1 border border-sci-red rounded-sm">
               <span className="text-[8px] text-sci-red tracking-widest">SURE?</span>
-              <button onClick={() => onDelete(item.id)} className="text-[10px] text-sci-red hover:text-white font-bold px-1">Y</button>
-              <button onClick={() => setIsDeleting(false)} className="text-[10px] text-text-muted hover:text-white font-bold px-1">N</button>
+              <button onClick={(e) => { e.stopPropagation(); onDelete(item.id); }} className="text-[10px] text-sci-red hover:text-white font-bold px-1">Y</button>
+              <button onClick={(e) => { e.stopPropagation(); setIsDeleting(false); }} className="text-[10px] text-text-muted hover:text-white font-bold px-1">N</button>
             </div>
           ) : (
-            <button onClick={() => setIsDeleting(true)} className="text-[10px] text-sci-red hover:text-white transition-colors">[DEL]</button>
+            <button onClick={(e) => { e.stopPropagation(); setIsDeleting(true); }} className="text-[10px] text-sci-red hover:text-white transition-colors">[DEL]</button>
           )}
         </div>
       </div>
 
-      <div className="font-mono text-xs text-sci-bone truncate">
-        <span className="text-sci-green">USR:</span> {item.username}
+      <div className={`font-mono text-xs text-sci-bone flex items-start gap-2 ${isExpanded ? 'break-all whitespace-normal' : 'truncate'}`}>
+        <span className="text-sci-green shrink-0 mt-[1px]">USR:</span> 
+        <span className="flex-1">{item.username}</span>
+        {isExpanded && (
+          <button 
+            onClick={(e) => { e.stopPropagation(); handleCopy('username', item.username); }}
+            className="text-[10px] text-text-muted hover:text-sci-bone transition-colors shrink-0 mt-[1px]"
+          >
+            {copiedField === 'username' ? '[COPIED]' : '[CPY]'}
+          </button>
+        )}
       </div>
-      <div className="font-mono text-xs text-sci-bone truncate flex items-center gap-2">
-        <span className="text-sci-green">PWD:</span> 
+      <div className={`font-mono text-xs text-sci-bone flex items-start gap-2 mt-1 ${isExpanded ? 'break-all whitespace-normal' : 'truncate'}`}>
+        <span className="text-sci-green shrink-0 mt-[1px]">PWD:</span> 
         <span className="flex-1">{revealed ? item.password : '••••••••••••'}</span>
-        <button 
-          onClick={() => setRevealed(!revealed)}
-          className="text-[10px] text-text-muted hover:text-sci-bone transition-colors shrink-0"
-        >
-          {revealed ? '[HIDE]' : '[VIEW]'}
-        </button>
+        {isExpanded && (
+          <div className="flex gap-1 shrink-0 mt-[1px]">
+            <button 
+              onClick={(e) => { e.stopPropagation(); handleCopy('password', item.password); }}
+              className="text-[10px] text-text-muted hover:text-sci-bone transition-colors"
+            >
+              {copiedField === 'password' ? '[COPIED]' : '[CPY]'}
+            </button>
+            <button 
+              onClick={(e) => { e.stopPropagation(); setRevealed(!revealed); }}
+              className="text-[10px] text-text-muted hover:text-sci-bone transition-colors"
+            >
+              {revealed ? '[HIDE]' : '[VIEW]'}
+            </button>
+          </div>
+        )}
       </div>
-    </div>
+      
+      {isExpanded && item.url && (
+        <div className="font-mono text-xs text-sci-bone break-all flex items-start gap-2 mt-3 pt-3 border-t border-border">
+          <span className="text-sci-green shrink-0 mt-[1px]">URL:</span> 
+          <a href={item.url.startsWith('http') ? item.url : `https://${item.url}`} target="_blank" rel="noopener noreferrer" className="flex-1 hover:text-sci-amber transition-colors underline decoration-border underline-offset-4" onClick={e => e.stopPropagation()}>
+            {item.url}
+          </a>
+        </div>
+      )}
+      
+      {isExpanded && item.notes && (
+        <div className="font-mono text-xs text-sci-bone break-all flex items-start gap-2 mt-1">
+          <span className="text-sci-green shrink-0 mt-[1px]">NTS:</span> 
+          <span className="flex-1 whitespace-pre-wrap">{item.notes}</span>
+        </div>
+      )}
+    </motion.div>
   )
 }
 
@@ -109,12 +163,14 @@ export default function VaultDashboard({
   userId, 
   userEmail,
   initialItems,
-  initialFolders
+  initialFolders,
+  initialLogs
 }: { 
   userId: string, 
   userEmail: string,
   initialItems: any[],
-  initialFolders: any[]
+  initialFolders: any[],
+  initialLogs: any[]
 }) {
   const [masterPassword, setMasterPassword] = useState('')
   const [cryptoKey, setCryptoKey] = useState<CryptoKey | null>(null)
@@ -124,6 +180,7 @@ export default function VaultDashboard({
   const [decryptedItems, setDecryptedItems] = useState<any[]>([])
   const [decryptedFolders, setDecryptedFolders] = useState<any[]>([])
   const [activeFolderId, setActiveFolderId] = useState<string | 'all'>('all')
+  const [expandedItemId, setExpandedItemId] = useState<string | null>(null)
 
   const [isAddingItem, setIsAddingItem] = useState(false)
   const [isAddingFolder, setIsAddingFolder] = useState(false)
@@ -589,7 +646,7 @@ export default function VaultDashboard({
               NO RECORDS
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            <div className="grid grid-flow-row-dense grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 items-start">
               {displayedItems.map(item => (
                 <VaultItemCard 
                   key={item.id} 
@@ -597,10 +654,17 @@ export default function VaultDashboard({
                   onDelete={handleDeleteRecord} 
                   onUpdate={handleUpdateRecord} 
                   folders={decryptedFolders} 
+                  isExpanded={expandedItemId === item.id}
+                  onToggleExpand={() => setExpandedItemId(expandedItemId === item.id ? null : item.id)}
                 />
               ))}
             </div>
           )}
+        </div>
+        
+        {/* Audit Logs */}
+        <div className="mt-8">
+          <AuditLog logs={initialLogs} />
         </div>
 
       </div>

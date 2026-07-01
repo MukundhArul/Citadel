@@ -3,6 +3,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
+import { logAudit } from '@/lib/audit'
 
 export async function addVaultItem(data: any) {
   const cookieStore = await cookies()
@@ -34,6 +35,8 @@ export async function addVaultItem(data: any) {
     return { error: error.message }
   }
 
+  await logAudit(supabase, 'SECTOR_ENCRYPTED', `New vault item secured (ID: ${item.id.substring(0,8)})`)
+
   revalidatePath('/dashboard')
   return { success: true, item }
 }
@@ -59,6 +62,8 @@ export async function addVaultFolder(data: any) {
     return { error: error.message }
   }
 
+  await logAudit(supabase, 'DIRECTORY_CREATED', `New folder established (ID: ${folder.id.substring(0,8)})`)
+
   revalidatePath('/dashboard')
   return { success: true, folder }
 }
@@ -80,6 +85,8 @@ export async function deleteVaultItem(id: string) {
     console.error('Delete error:', error)
     return { error: error.message }
   }
+
+  await logAudit(supabase, 'SECTOR_PURGED', `Vault item permanently deleted (ID: ${id.substring(0,8)})`)
 
   revalidatePath('/dashboard')
   return { success: true }
@@ -114,6 +121,8 @@ export async function updateVaultItem(id: string, data: any) {
     console.error('Update error:', error)
     return { error: error.message }
   }
+
+  await logAudit(supabase, 'SECTOR_RECALIBRATED', `Vault item updated (ID: ${id.substring(0,8)})`)
 
   revalidatePath('/dashboard')
   return { success: true }

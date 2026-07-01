@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
+import { logAudit } from '@/lib/audit'
 
 export async function login(formData: FormData) {
   const cookieStore = await cookies()
@@ -19,6 +20,8 @@ export async function login(formData: FormData) {
   if (error) {
     redirect(`/login?error=${encodeURIComponent(error.message)}`)
   }
+
+  await logAudit(supabase, 'VAULT_ACCESS', 'Operator identity verified. Vault decrypted.')
 
   revalidatePath('/', 'layout')
   redirect('/dashboard')
