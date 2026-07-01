@@ -2,6 +2,7 @@ import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import VaultDashboard from './vault-dashboard'
+import { Logo } from '@/components/ui/logo'
 
 export default async function DashboardPage() {
   const cookieStore = await cookies()
@@ -35,9 +36,12 @@ export default async function DashboardPage() {
     <main className="flex-1 flex flex-col p-8 max-w-5xl mx-auto w-full">
       <header className="flex justify-between items-center mb-12 border-b border-border pb-4">
         <div>
-          <h1 className="font-mono text-2xl font-bold text-sci-green tracking-widest uppercase" style={{ textShadow: "var(--text-glow-green)" }}>
-            MISSION CONTROL
-          </h1>
+          <div className="flex items-center gap-3">
+            <Logo className="w-6 h-6 text-sci-green" />
+            <h1 className="font-mono text-2xl font-bold text-sci-green tracking-widest uppercase" style={{ textShadow: "var(--text-glow-green)" }}>
+              MISSION CONTROL
+            </h1>
+          </div>
           <div className="text-xs text-sci-green tracking-[0.2em] mt-1 uppercase">
             OPERATOR: {user.email}
           </div>

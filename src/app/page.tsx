@@ -1,22 +1,25 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Logo } from "@/components/ui/logo";
 
 export default function Home() {
   return (
     <main className="flex-1 flex items-center justify-center p-8">
       <div className="w-full max-w-md border border-border bg-surface p-8" style={{ clipPath: "var(--clip-corner-md)" }}>
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 flex flex-col items-center">
           <div className="text-xs text-sci-green tracking-[0.2em] mb-4">
             ▶ SYSTEM INITIALIZED — VAULT ONLINE
           </div>
-          <pre className="font-mono text-xl font-bold text-sci-green leading-tight tracking-[0.12em] mb-4" style={{ textShadow: "var(--text-glow-green)" }}>
-{`╔══════════════════╗
-║  CITADEL  VAULT  ║
-╚══════════════════╝`}
-          </pre>
-          <p className="text-sm text-sci-bone tracking-wide">
+          
+          <Logo className="w-24 h-24 text-sci-green mb-6" />
+          
+          <h1 className="font-mono text-2xl font-bold text-sci-green tracking-widest uppercase mb-4" style={{ textShadow: "var(--text-glow-green)" }}>
+            CITADEL
+          </h1>
+          
+          <div className="text-xs text-text-secondary tracking-[0.3em]">
             Secure, zero-knowledge password management.
-          </p>
+          </div>
         </div>
 
         <div className="flex flex-col gap-4">
