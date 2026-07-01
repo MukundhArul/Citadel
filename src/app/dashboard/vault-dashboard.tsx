@@ -1,19 +1,89 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { deriveKey, decryptText, encryptText } from '@/lib/crypto'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { addVaultItem, addVaultFolder } from './actions'
+import { addVaultItem, addVaultFolder, deleteVaultItem, updateVaultItem } from './actions'
 
-function VaultItemCard({ item }: { item: any }) {
+function VaultItemCard({ 
+  item, 
+  onDelete, 
+  onUpdate,
+  folders
+}: { 
+  item: any, 
+  onDelete: (id: string) => void,
+  onUpdate: (id: string, updatedRecord: any) => Promise<void>,
+  folders: any[]
+}) {
   const [revealed, setRevealed] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  
+  const [editRecord, setEditRecord] = useState({
+    title: item.title,
+    username: item.username,
+    password: item.password,
+    url: item.url || '',
+    notes: item.notes || '',
+    folderId: item.folder_id || 'all'
+  })
+
+  if (isEditing) {
+    return (
+      <form onSubmit={async (e) => {
+        e.preventDefault()
+        setIsSaving(true)
+        await onUpdate(item.id, editRecord)
+        setIsSaving(false)
+        setIsEditing(false)
+      }} className="border border-sci-amber bg-surface p-4 flex flex-col gap-3 rounded-sm shadow-[0_0_10px_rgba(255,136,0,0.1)]">
+        <h4 className="font-mono text-sci-amber text-xs uppercase tracking-widest border-b border-sci-amber/30 pb-1">EDIT RECORD</h4>
+        <Input placeholder="TITLE" className="h-8 text-xs" value={editRecord.title} onChange={e => setEditRecord({...editRecord, title: e.target.value})} required />
+        <Input placeholder="USERNAME" className="h-8 text-xs" value={editRecord.username} onChange={e => setEditRecord({...editRecord, username: e.target.value})} required />
+        <Input placeholder="PASSWORD" type="text" className="h-8 text-xs" value={editRecord.password} onChange={e => setEditRecord({...editRecord, password: e.target.value})} required />
+        <select 
+          className="flex h-8 w-full border border-border bg-surface px-2 py-1 text-xs font-mono text-text-primary uppercase focus-visible:outline-none focus-visible:border-sci-amber transition-colors rounded-sm"
+          value={editRecord.folderId} 
+          onChange={e => setEditRecord({...editRecord, folderId: e.target.value})}
+        >
+          <option value="all">NO FOLDER (ROOT)</option>
+          {folders.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
+        </select>
+        <Input placeholder="URL (OPTIONAL)" className="h-8 text-xs" value={editRecord.url} onChange={e => setEditRecord({...editRecord, url: e.target.value})} />
+        <Input placeholder="NOTES (OPTIONAL)" className="h-8 text-xs" value={editRecord.notes} onChange={e => setEditRecord({...editRecord, notes: e.target.value})} />
+        
+        <div className="flex gap-2 mt-2">
+          <Button type="button" variant="ghost" size="sm" className="flex-1 text-xs" onClick={() => { setIsEditing(false); setEditRecord({...item, folderId: item.folder_id || 'all'}) }}>CANCEL</Button>
+          <Button type="submit" variant="warning" size="sm" className="flex-1 text-xs" disabled={isSaving}>{isSaving ? '...' : 'SAVE'}</Button>
+        </div>
+      </form>
+    )
+  }
 
   return (
     <div className="border border-border bg-surface p-4 flex flex-col gap-2 hover:border-sci-blue transition-colors group relative rounded-sm">
-      <div className="font-mono text-sm font-bold text-sci-bone tracking-wider uppercase mb-2 truncate group-hover:text-sci-green transition-colors pr-8">
-        {item.title}
+      <div className="flex justify-between items-start mb-1 gap-2">
+        <div className="font-mono text-sm font-bold text-sci-bone tracking-wider uppercase truncate group-hover:text-sci-green transition-colors">
+          {item.title}
+        </div>
+        
+        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button onClick={() => setIsEditing(true)} className="text-[10px] text-sci-amber hover:text-white transition-colors">[EDIT]</button>
+          {isDeleting ? (
+            <div className="flex gap-1 items-center bg-red-950/50 px-1 border border-sci-red rounded-sm">
+              <span className="text-[8px] text-sci-red tracking-widest">SURE?</span>
+              <button onClick={() => onDelete(item.id)} className="text-[10px] text-sci-red hover:text-white font-bold px-1">Y</button>
+              <button onClick={() => setIsDeleting(false)} className="text-[10px] text-text-muted hover:text-white font-bold px-1">N</button>
+            </div>
+          ) : (
+            <button onClick={() => setIsDeleting(true)} className="text-[10px] text-sci-red hover:text-white transition-colors">[DEL]</button>
+          )}
+        </div>
       </div>
+
       <div className="font-mono text-xs text-sci-bone truncate">
         <span className="text-sci-blue">USR:</span> {item.username}
       </div>
@@ -22,7 +92,7 @@ function VaultItemCard({ item }: { item: any }) {
         <span className="flex-1">{revealed ? item.password : '••••••••••••'}</span>
         <button 
           onClick={() => setRevealed(!revealed)}
-          className="text-[10px] text-text-muted hover:text-sci-bone transition-colors"
+          className="text-[10px] text-text-muted hover:text-sci-bone transition-colors shrink-0"
         >
           {revealed ? '[HIDE]' : '[VIEW]'}
         </button>
@@ -47,6 +117,40 @@ export default function VaultDashboard({ userId, initialItems, initialFolders }:
   
   const [newRecord, setNewRecord] = useState({ title: '', username: '', password: '', url: '', notes: '', folderId: 'all' })
   const [newFolderName, setNewFolderName] = useState('')
+
+  // -------------------------------------------------------------
+  // AUTO-LOCK TIMER (5 minutes of inactivity)
+  // -------------------------------------------------------------
+  useEffect(() => {
+    let timeout: NodeJS.Timeout
+    const lockVault = () => {
+      setCryptoKey(null)
+      setDecryptedItems([])
+      setDecryptedFolders([])
+      setMasterPassword('')
+      setError('Vault auto-locked due to inactivity.')
+    }
+
+    const resetTimer = () => {
+      clearTimeout(timeout)
+      // 5 minutes
+      timeout = setTimeout(lockVault, 5 * 60 * 1000)
+    }
+
+    if (cryptoKey) {
+      window.addEventListener('mousemove', resetTimer)
+      window.addEventListener('keydown', resetTimer)
+      window.addEventListener('click', resetTimer)
+      resetTimer()
+    }
+
+    return () => {
+      clearTimeout(timeout)
+      window.removeEventListener('mousemove', resetTimer)
+      window.removeEventListener('keydown', resetTimer)
+      window.removeEventListener('click', resetTimer)
+    }
+  }, [cryptoKey])
 
   const handleUnlock = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -157,7 +261,6 @@ export default function VaultDashboard({ userId, initialItems, initialFolders }:
         folder_id: payload.folderId,
       }, ...decryptedItems])
       
-      // Keep them in the current folder view, but clear form
       if (payload.folderId) {
         setActiveFolderId(payload.folderId)
       }
@@ -168,6 +271,54 @@ export default function VaultDashboard({ userId, initialItems, initialFolders }:
       alert("Failed to save record.")
     } finally {
       setIsSaving(false)
+    }
+  }
+
+  const handleDeleteRecord = async (id: string) => {
+    try {
+      const res = await deleteVaultItem(id)
+      if (res.error) throw new Error(res.error)
+      setDecryptedItems(decryptedItems.filter(item => item.id !== id))
+    } catch (err) {
+      console.error("Failed to delete", err)
+      alert("Failed to delete record")
+    }
+  }
+
+  const handleUpdateRecord = async (id: string, updatedData: any) => {
+    if (!cryptoKey) return
+    try {
+      const encryptedTitle = await encryptText(updatedData.title, cryptoKey)
+      const encryptedUsername = await encryptText(updatedData.username, cryptoKey)
+      const encryptedPassword = await encryptText(updatedData.password, cryptoKey)
+      const encryptedUrl = updatedData.url ? await encryptText(updatedData.url, cryptoKey) : { ciphertext: null, iv: null }
+      const encryptedNotes = updatedData.notes ? await encryptText(updatedData.notes, cryptoKey) : { ciphertext: null, iv: null }
+
+      const payload = {
+        encryptedTitle,
+        encryptedUsername,
+        encryptedPassword,
+        encryptedUrl,
+        encryptedNotes,
+        folderId: updatedData.folderId === 'all' ? null : updatedData.folderId
+      }
+
+      const res = await updateVaultItem(id, payload)
+      if (res.error) throw new Error(res.error)
+
+      setDecryptedItems(decryptedItems.map(item => item.id === id ? {
+        ...item,
+        title: updatedData.title,
+        username: updatedData.username,
+        password: updatedData.password,
+        url: updatedData.url,
+        notes: updatedData.notes,
+        folder_id: payload.folderId
+      } : item))
+
+    } catch (err) {
+      console.error("Failed to update", err)
+      alert("Failed to update record")
     }
   }
 
@@ -193,8 +344,8 @@ export default function VaultDashboard({ userId, initialItems, initialFolders }:
               required
             />
             {error && (
-              <div className="text-sci-red text-xs border border-sci-red p-2 bg-red-950/20 font-mono">
-                [ERROR]: {error}
+              <div className="text-sci-amber text-xs border border-sci-amber p-2 bg-sci-amber/10 font-mono">
+                [ALERT]: {error}
               </div>
             )}
             <Button type="submit" variant="warning" disabled={isDecrypting}>
@@ -223,6 +374,19 @@ export default function VaultDashboard({ userId, initialItems, initialFolders }:
           </Button>
         </div>
 
+        <div className="flex flex-col gap-2">
+          <div className="text-xs font-mono text-text-muted tracking-widest uppercase mb-2 border-b border-border pb-2">DIRECTORY</div>
+          
+          <select 
+            className="flex h-11 w-full border border-border bg-surface px-3 py-2 text-[0.875rem] font-mono text-sci-blue uppercase focus-visible:outline-none focus-visible:border-sci-green transition-colors rounded-sm cursor-pointer"
+            value={activeFolderId} 
+            onChange={e => setActiveFolderId(e.target.value)}
+          >
+            <option value="all">ALL RECORDS</option>
+            {decryptedFolders.map(f => <option key={f.id} value={f.id}>📁 {f.name}</option>)}
+          </select>
+        </div>
+
         {/* Add Folder Form */}
         {isAddingFolder && (
           <form onSubmit={handleAddFolder} className="flex flex-col gap-3 border border-sci-blue bg-surface p-4 rounded-sm" style={{ boxShadow: "0 0 15px rgba(68, 102, 204, 0.1)" }}>
@@ -238,19 +402,6 @@ export default function VaultDashboard({ userId, initialItems, initialFolders }:
             </div>
           </form>
         )}
-
-        <div className="flex flex-col gap-2 mt-4">
-          <div className="text-xs font-mono text-text-muted tracking-widest uppercase mb-2 border-b border-border pb-2">DIRECTORY</div>
-          
-          <select 
-            className="flex h-11 w-full border border-border bg-surface px-3 py-2 text-[0.875rem] font-mono text-sci-blue uppercase focus-visible:outline-none focus-visible:border-sci-green transition-colors rounded-sm cursor-pointer"
-            value={activeFolderId} 
-            onChange={e => setActiveFolderId(e.target.value)}
-          >
-            <option value="all">ALL RECORDS</option>
-            {decryptedFolders.map(f => <option key={f.id} value={f.id}>📁 {f.name}</option>)}
-          </select>
-        </div>
       </div>
 
       {/* Main Content Area */}
@@ -278,7 +429,7 @@ export default function VaultDashboard({ userId, initialItems, initialFolders }:
               </div>
 
               <Input placeholder="USERNAME" value={newRecord.username} onChange={e => setNewRecord({...newRecord, username: e.target.value})} required />
-              <Input placeholder="PASSWORD" type="password" value={newRecord.password} onChange={e => setNewRecord({...newRecord, password: e.target.value})} required />
+              <Input placeholder="PASSWORD" type="text" value={newRecord.password} onChange={e => setNewRecord({...newRecord, password: e.target.value})} required />
               <Input placeholder="URL (OPTIONAL)" value={newRecord.url} onChange={e => setNewRecord({...newRecord, url: e.target.value})} />
               <Input placeholder="NOTES (OPTIONAL)" value={newRecord.notes} onChange={e => setNewRecord({...newRecord, notes: e.target.value})} />
             </div>
@@ -308,7 +459,13 @@ export default function VaultDashboard({ userId, initialItems, initialFolders }:
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
               {displayedItems.map(item => (
-                <VaultItemCard key={item.id} item={item} />
+                <VaultItemCard 
+                  key={item.id} 
+                  item={item} 
+                  onDelete={handleDeleteRecord} 
+                  onUpdate={handleUpdateRecord} 
+                  folders={decryptedFolders} 
+                />
               ))}
             </div>
           )}

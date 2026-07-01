@@ -5,7 +5,7 @@
 // Helper to convert string to ArrayBuffer
 function stringToArrayBuffer(str: string): ArrayBuffer {
   const encoder = new TextEncoder();
-  return encoder.encode(str);
+  return encoder.encode(str).buffer;
 }
 
 // Helper to convert ArrayBuffer to string
