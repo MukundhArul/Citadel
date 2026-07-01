@@ -34,7 +34,7 @@ export default async function DashboardPage() {
 
   return (
     <main className="flex-1 flex flex-col p-8 max-w-5xl mx-auto w-full">
-      <VaultDashboard userId={user.id} userEmail={user.email} initialItems={items || []} initialFolders={folders || []} />
+      <VaultDashboard userId={user.id} userEmail={user.email ?? "unknown"} initialItems={items || []} initialFolders={folders || []} />
     </main>
   )
 }

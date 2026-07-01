@@ -2,8 +2,6 @@
 
 import { useFormStatus } from 'react-dom'
 import { Button } from '@/components/ui/button'
-import { Spinner } from '@/components/ui/spinner'
-
 export function SubmitButton({ 
   formAction, 
   variant = 'exec', 
@@ -22,7 +20,7 @@ export function SubmitButton({
   if (pending) {
     return (
       <div className={`flex justify-center items-center py-2 ${className}`}>
-        <Spinner label="LOADING..." />
+        <span className="font-mono text-sci-cyan animate-pulse tracking-widest text-sm">{loadingLabel}</span>
       </div>
     )
   }

@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Grid } from '@/components/ui/grid'
 import { StatCard } from '@/components/ui/stat-card'
-import { Spinner } from '@/components/ui/spinner'
 import { Logo } from '@/components/ui/logo'
 import { addVaultItem, addVaultFolder, deleteVaultItem, updateVaultItem } from './actions'
 import zxcvbn from 'zxcvbn'
@@ -390,7 +389,9 @@ export default function VaultDashboard({
             )}
             {isDecrypting ? (
               <div className="py-4">
-                <Spinner size="LG" label="PROCESSING DATA..." />
+                <div className="text-center font-mono text-sci-cyan animate-pulse tracking-widest text-sm">
+                  PROCESSING DATA...
+                </div>
               </div>
             ) : (
               <Button type="submit" variant="exec" className="w-full">
