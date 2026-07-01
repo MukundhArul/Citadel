@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Grid } from '@/components/ui/grid'
 import { StatCard } from '@/components/ui/stat-card'
 import { addVaultItem, addVaultFolder, deleteVaultItem, updateVaultItem } from './actions'
+import zxcvbn from 'zxcvbn'
 
 function VaultItemCard({ 
   item, 
@@ -465,7 +466,34 @@ export default function VaultDashboard({ userId, initialItems, initialFolders }:
               </div>
 
               <Input placeholder="USERNAME" value={newRecord.username} onChange={e => setNewRecord({...newRecord, username: e.target.value})} required />
-              <Input placeholder="PASSWORD" type="text" value={newRecord.password} onChange={e => setNewRecord({...newRecord, password: e.target.value})} required />
+              
+              <div className="flex flex-col gap-1">
+                <Input placeholder="PASSWORD" type="text" value={newRecord.password} onChange={e => setNewRecord({...newRecord, password: e.target.value})} required />
+                {newRecord.password && (
+                  <div className="flex items-center gap-2 mt-1">
+                    <div className="flex flex-1 h-1 bg-surface border border-border">
+                      <div 
+                        className={`h-full transition-all ${
+                          zxcvbn(newRecord.password).score <= 1 ? 'bg-sci-red' : 
+                          zxcvbn(newRecord.password).score <= 3 ? 'bg-sci-amber' : 
+                          'bg-sci-green'
+                        }`}
+                        style={{ width: `${(zxcvbn(newRecord.password).score + 1) * 20}%` }}
+                      ></div>
+                    </div>
+                    <span className={`text-[9px] font-mono tracking-widest uppercase ${
+                      zxcvbn(newRecord.password).score <= 1 ? 'text-sci-red' : 
+                      zxcvbn(newRecord.password).score <= 3 ? 'text-sci-amber' : 
+                      'text-sci-green'
+                    }`}>
+                      {zxcvbn(newRecord.password).score <= 1 ? 'CRITICAL' : 
+                       zxcvbn(newRecord.password).score <= 3 ? 'WARNING' : 
+                       'SECURE'}
+                    </span>
+                  </div>
+                )}
+              </div>
+
               <Input placeholder="URL (OPTIONAL)" value={newRecord.url} onChange={e => setNewRecord({...newRecord, url: e.target.value})} />
               <Input placeholder="NOTES (OPTIONAL)" value={newRecord.notes} onChange={e => setNewRecord({...newRecord, notes: e.target.value})} />
             </div>
