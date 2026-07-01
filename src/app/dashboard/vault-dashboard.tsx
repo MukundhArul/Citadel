@@ -439,6 +439,12 @@ export default function VaultDashboard({ userId, initialItems, initialFolders }:
             {decryptedFolders.map(f => <option key={f.id} value={f.id}>📁 {f.name}</option>)}
           </select>
         </div>
+
+        <div className="mt-4 pt-4 border-t border-border flex flex-col gap-2">
+          <Button variant="ghost" onClick={handleExportData} className="w-full text-xs text-sci-amber border border-transparent hover:border-sci-amber">
+            [ EXPORT DECRYPTED DATA ]
+          </Button>
+        </div>
       </div>
 
       {/* Main Content Area */}
