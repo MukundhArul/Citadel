@@ -24,7 +24,7 @@ export default function Home() {
 
         <div className="flex flex-col gap-4">
           <Button variant="info" className="w-full" asChild>
-            <Link href="/login">INITIALIZE NEW VAULT</Link>
+            <Link href="/login?mode=register">INITIALIZE NEW VAULT</Link>
           </Button>
           <Button variant="default" className="w-full" asChild>
             <Link href="/login">DECRYPT EXISTING VAULT</Link>

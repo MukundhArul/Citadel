@@ -6,9 +6,9 @@ import Link from 'next/link'
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string, message?: string }>
+  searchParams: Promise<{ error?: string, message?: string, mode?: string }>
 }) {
-  const { error, message } = await searchParams;
+  const { error, message, mode } = await searchParams;
   return (
     <main className="flex-1 flex flex-col items-center justify-center p-8">
       <Link href="/" className="absolute top-8 left-8 text-xs text-sci-green hover:text-sci-bone font-mono transition-colors">
@@ -18,10 +18,10 @@ export default async function LoginPage({
       <div className="w-full max-w-md border border-border bg-surface p-8" style={{ clipPath: "var(--clip-corner-md)" }}>
         <div className="mb-8">
           <div className="text-xs text-sci-amber tracking-[0.2em] mb-2 uppercase">
-            AUTHORIZATION REQUIRED
+            {mode === 'register' ? 'INITIALIZATION SEQUENCE' : 'AUTHORIZATION REQUIRED'}
           </div>
-          <h1 className="font-mono text-xl font-bold text-sci-green tracking-widest" style={{ textShadow: "var(--text-glow-green)" }}>
-            IDENTITY VERIFICATION
+          <h1 className="font-mono text-xl font-bold text-sci-green tracking-widest uppercase" style={{ textShadow: "var(--text-glow-green)" }}>
+            {mode === 'register' ? 'CREATE NEW VAULT' : 'IDENTITY VERIFICATION'}
           </h1>
         </div>
 
@@ -53,12 +53,25 @@ export default async function LoginPage({
           )}
 
           <div className="flex gap-4 mt-4">
-            <Button formAction={login} variant="exec" className="flex-1">
-              LOGIN
-            </Button>
-            <Button formAction={signup} variant="info" className="flex-1">
-              REGISTER
-            </Button>
+            {mode === 'register' ? (
+              <>
+                <Button formAction={signup} variant="info" className="flex-1">
+                  INITIALIZE VAULT
+                </Button>
+                <Button formAction={login} variant="ghost" className="flex-1 border border-transparent">
+                  LOGIN INSTEAD
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button formAction={login} variant="exec" className="flex-1">
+                  DECRYPT VAULT
+                </Button>
+                <Button formAction={signup} variant="ghost" className="flex-1 border border-transparent">
+                  NEW VAULT
+                </Button>
+              </>
+            )}
           </div>
         </form>
       </div>
