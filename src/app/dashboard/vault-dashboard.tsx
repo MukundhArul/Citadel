@@ -374,19 +374,6 @@ export default function VaultDashboard({ userId, initialItems, initialFolders }:
           </Button>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <div className="text-xs font-mono text-text-muted tracking-widest uppercase mb-2 border-b border-border pb-2">DIRECTORY</div>
-          
-          <select 
-            className="flex h-11 w-full border border-border bg-surface px-3 py-2 text-[0.875rem] font-mono text-sci-blue uppercase focus-visible:outline-none focus-visible:border-sci-green transition-colors rounded-sm cursor-pointer"
-            value={activeFolderId} 
-            onChange={e => setActiveFolderId(e.target.value)}
-          >
-            <option value="all">ALL RECORDS</option>
-            {decryptedFolders.map(f => <option key={f.id} value={f.id}>📁 {f.name}</option>)}
-          </select>
-        </div>
-
         {/* Add Folder Form */}
         {isAddingFolder && (
           <form onSubmit={handleAddFolder} className="flex flex-col gap-3 border border-sci-blue bg-surface p-4 rounded-sm" style={{ boxShadow: "0 0 15px rgba(68, 102, 204, 0.1)" }}>
@@ -402,6 +389,19 @@ export default function VaultDashboard({ userId, initialItems, initialFolders }:
             </div>
           </form>
         )}
+
+        <div className="flex flex-col gap-2">
+          <div className="text-xs font-mono text-text-muted tracking-widest uppercase mb-2 border-b border-border pb-2">DIRECTORY</div>
+          
+          <select 
+            className="flex h-11 w-full border border-border bg-surface px-3 py-2 text-[0.875rem] font-mono text-sci-blue uppercase focus-visible:outline-none focus-visible:border-sci-green transition-colors rounded-sm cursor-pointer"
+            value={activeFolderId} 
+            onChange={e => setActiveFolderId(e.target.value)}
+          >
+            <option value="all">ALL RECORDS</option>
+            {decryptedFolders.map(f => <option key={f.id} value={f.id}>📁 {f.name}</option>)}
+          </select>
+        </div>
       </div>
 
       {/* Main Content Area */}

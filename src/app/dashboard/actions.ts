@@ -9,7 +9,7 @@ export async function addVaultItem(data: any) {
   const supabase = createClient(cookieStore)
 
   const { data: { user } } = await supabase.auth.getUser()
-  
+
   if (!user) {
     return { error: 'Not authenticated' }
   }
@@ -43,7 +43,7 @@ export async function addVaultFolder(data: any) {
   const supabase = createClient(cookieStore)
 
   const { data: { user } } = await supabase.auth.getUser()
-  
+
   if (!user) {
     return { error: 'Not authenticated' }
   }
