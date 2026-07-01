@@ -22,7 +22,7 @@ export function SubmitButton({
   if (pending) {
     return (
       <div className={`flex justify-center items-center py-2 ${className}`}>
-        <Spinner size="MD" label={loadingLabel} />
+        <Spinner label="LOADING..." />
       </div>
     )
   }

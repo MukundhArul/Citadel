@@ -390,7 +390,7 @@ export default function VaultDashboard({
             )}
             {isDecrypting ? (
               <div className="py-4">
-                <Spinner label="DECRYPTING VAULT..." />
+                <Spinner size="LG" label="PROCESSING DATA..." />
               </div>
             ) : (
               <Button type="submit" variant="exec" className="w-full">

@@ -56,7 +56,7 @@ export default async function LoginPage({
           <div className="flex gap-4 mt-4">
             {mode === 'register' ? (
               <>
-                <SubmitButton formAction={signup} variant="info" className="flex-1" loadingLabel="INITIALIZING...">
+                <SubmitButton formAction={signup} variant="info" className="flex-1">
                   INITIALIZE VAULT
                 </SubmitButton>
                 <Button formAction={login} variant="ghost" className="flex-1 border border-transparent">
@@ -65,7 +65,7 @@ export default async function LoginPage({
               </>
             ) : (
               <>
-                <SubmitButton formAction={login} variant="exec" className="flex-1" loadingLabel="AUTHENTICATING...">
+                <SubmitButton formAction={login} variant="exec" className="flex-1">
                   DECRYPT VAULT
                 </SubmitButton>
                 <Button formAction={signup} variant="ghost" className="flex-1 border border-transparent">
