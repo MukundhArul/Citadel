@@ -11,7 +11,7 @@ export default async function LoginPage({
   const { error, message } = await searchParams;
   return (
     <main className="flex-1 flex flex-col items-center justify-center p-8">
-      <Link href="/" className="absolute top-8 left-8 text-xs text-sci-blue hover:text-sci-bone font-mono transition-colors">
+      <Link href="/" className="absolute top-8 left-8 text-xs text-sci-green hover:text-sci-bone font-mono transition-colors">
         ← BACK TO TERMINAL
       </Link>
       

@@ -38,7 +38,7 @@ export default async function DashboardPage() {
           <h1 className="font-mono text-2xl font-bold text-sci-green tracking-widest uppercase" style={{ textShadow: "var(--text-glow-green)" }}>
             MISSION CONTROL
           </h1>
-          <div className="text-xs text-sci-blue tracking-[0.2em] mt-1 uppercase">
+          <div className="text-xs text-sci-green tracking-[0.2em] mt-1 uppercase">
             OPERATOR: {user.email}
           </div>
         </div>

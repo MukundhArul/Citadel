@@ -64,7 +64,7 @@ function VaultItemCard({
   }
 
   return (
-    <div className="border border-border bg-surface p-4 flex flex-col gap-2 hover:border-sci-blue transition-colors group relative rounded-sm">
+    <div className="border border-border bg-surface p-4 flex flex-col gap-2 hover:border-sci-green transition-colors group relative rounded-sm">
       <div className="flex justify-between items-start mb-1 gap-2">
         <div className="font-mono text-sm font-bold text-sci-bone tracking-wider uppercase truncate group-hover:text-sci-green transition-colors">
           {item.title}
@@ -85,10 +85,10 @@ function VaultItemCard({
       </div>
 
       <div className="font-mono text-xs text-sci-bone truncate">
-        <span className="text-sci-blue">USR:</span> {item.username}
+        <span className="text-sci-green">USR:</span> {item.username}
       </div>
       <div className="font-mono text-xs text-sci-bone truncate flex items-center gap-2">
-        <span className="text-sci-blue">PWD:</span> 
+        <span className="text-sci-green">PWD:</span> 
         <span className="flex-1">{revealed ? item.password : '••••••••••••'}</span>
         <button 
           onClick={() => setRevealed(!revealed)}
@@ -376,8 +376,8 @@ export default function VaultDashboard({ userId, initialItems, initialFolders }:
 
         {/* Add Folder Form */}
         {isAddingFolder && (
-          <form onSubmit={handleAddFolder} className="flex flex-col gap-3 border border-sci-blue bg-surface p-4 rounded-sm" style={{ boxShadow: "0 0 15px rgba(68, 102, 204, 0.1)" }}>
-            <h3 className="font-mono text-sci-blue text-xs tracking-widest uppercase">CREATE FOLDER:</h3>
+          <form onSubmit={handleAddFolder} className="flex flex-col gap-3 border border-sci-green bg-surface p-4 rounded-sm" style={{ boxShadow: "0 0 15px rgba(0, 237, 63, 0.1)" }}>
+            <h3 className="font-mono text-sci-green text-xs tracking-widest uppercase">CREATE FOLDER:</h3>
             <Input placeholder="FOLDER NAME" className="w-full text-xs" value={newFolderName} onChange={e => setNewFolderName(e.target.value)} required />
             <div className="flex gap-2">
               <Button type="button" variant="ghost" size="sm" className="flex-1" onClick={() => setIsAddingFolder(false)}>
@@ -394,7 +394,7 @@ export default function VaultDashboard({ userId, initialItems, initialFolders }:
           <div className="text-xs font-mono text-text-muted tracking-widest uppercase mb-2 border-b border-border pb-2">DIRECTORY</div>
           
           <select 
-            className="flex h-11 w-full border border-border bg-surface px-3 py-2 text-[0.875rem] font-mono text-sci-blue uppercase focus-visible:outline-none focus-visible:border-sci-green transition-colors rounded-sm cursor-pointer"
+            className="flex h-11 w-full border border-border bg-surface px-3 py-2 text-[0.875rem] font-mono text-sci-green uppercase focus-visible:outline-none focus-visible:border-sci-green transition-colors rounded-sm cursor-pointer"
             value={activeFolderId} 
             onChange={e => setActiveFolderId(e.target.value)}
           >
@@ -447,7 +447,7 @@ export default function VaultDashboard({ userId, initialItems, initialFolders }:
 
         {/* Records List */}
         <div>
-          <div className="text-xs font-mono text-sci-blue tracking-widest uppercase mb-4 border-b border-border pb-2">
+          <div className="text-xs font-mono text-sci-green tracking-widest uppercase mb-4 border-b border-border pb-2">
             {activeFolderId === 'all' ? 'ALL RECORDS' : decryptedFolders.find(f => f.id === activeFolderId)?.name || 'FOLDER'} 
             {' '}— {displayedItems.length} FOUND
           </div>

@@ -17,7 +17,7 @@ const buttonVariants = cva(
         warning:
           "bg-transparent border-sci-amber text-sci-amber hover:bg-sci-amber hover:text-background hover:shadow-[0_0_10px_rgba(255,136,0,0.4)] focus-visible:shadow-[0_0_10px_rgba(255,136,0,0.4)]",
         info:
-          "bg-transparent border-sci-blue text-sci-blue hover:bg-sci-blue hover:text-background hover:shadow-[0_0_10px_rgba(68,102,204,0.4)] focus-visible:shadow-[0_0_10px_rgba(68,102,204,0.4)]",
+          "bg-transparent border-sci-green text-sci-green hover:bg-sci-green hover:text-background hover:shadow-[0_0_10px_rgba(0,237,63,0.4)] focus-visible:shadow-[0_0_10px_rgba(0,237,63,0.4)]",
         ghost:
           "border-transparent bg-transparent text-text-secondary hover:text-sci-bone hover:bg-surface-raised",
       },

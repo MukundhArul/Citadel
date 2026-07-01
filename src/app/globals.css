@@ -16,7 +16,6 @@
   --color-sci-amber: var(--color-amber);
   --color-sci-amber-light: var(--color-amber-light);
   --color-sci-red: var(--color-red);
-  --color-sci-blue: var(--color-blue);
   --color-sci-bone: var(--color-bone);
   
   --font-mono: var(--font-geist-mono);
@@ -24,11 +23,11 @@
 }
 
 :root {
-  --background: #050505;
+  --background: #040301;
   --foreground: #E0D5BE;
   
-  --surface: #0D0D0D;
-  --surface-raised: #141414;
+  --surface: #070604;
+  --surface-raised: #070604;
   
   --border: #262626;
   --border-active: #404040;
@@ -43,7 +42,6 @@
   --color-amber: #ff8800;
   --color-amber-light: #ffa238;
   --color-red: #cc2200;
-  --color-blue: #4466cc;
   --color-bone: #E0D5BE;
 
   --glow-green: 0 0 10px rgba(0, 237, 63, 0.4);
