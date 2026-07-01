@@ -325,6 +325,31 @@ export default function VaultDashboard({ userId, initialItems, initialFolders }:
     }
   }
 
+  const handleExportData = () => {
+    const exportData = {
+      exportedAt: new Date().toISOString(),
+      folders: decryptedFolders.map(f => ({ id: f.id, name: f.name })),
+      records: decryptedItems.map(item => ({
+        id: item.id,
+        folder_id: item.folder_id,
+        title: item.title,
+        username: item.username,
+        password: item.password,
+        url: item.url,
+        notes: item.notes,
+      }))
+    }
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `citadel-backup-${new Date().toISOString().split('T')[0]}.json`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
+
   if (!cryptoKey) {
     return (
       <div className="flex flex-col items-center justify-center flex-1 max-w-md mx-auto w-full">
