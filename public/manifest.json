@@ -1,0 +1,17 @@
+{
+  "name": "Citadel Vault",
+  "short_name": "Citadel",
+  "description": "Secure, zero-knowledge password manager with a retro sci-fi aesthetic.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#040301",
+  "theme_color": "#040301",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

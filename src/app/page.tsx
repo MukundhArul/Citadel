@@ -4,8 +4,8 @@ import { Logo } from "@/components/ui/logo";
 
 export default function Home() {
   return (
-    <main className="flex-1 flex items-center justify-center p-8">
-      <div className="w-full max-w-md border border-border bg-surface p-8" style={{ clipPath: "var(--clip-corner-md)" }}>
+    <main className="flex-1 flex items-center justify-center p-4 sm:p-8">
+      <div className="w-full max-w-md border border-border bg-surface p-6 sm:p-8" style={{ clipPath: "var(--clip-corner-md)" }}>
         <div className="text-center mb-8 flex flex-col items-center">
           <div className="text-xs text-sci-green tracking-[0.2em] mb-4">
             ▶ SYSTEM INITIALIZED — VAULT ONLINE

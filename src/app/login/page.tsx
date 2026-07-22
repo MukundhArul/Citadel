@@ -11,12 +11,12 @@ export default async function LoginPage({
 }) {
   const { error, message, mode } = await searchParams;
   return (
-    <main className="flex-1 flex flex-col items-center justify-center p-8">
-      <Link href="/" className="absolute top-8 left-8 text-xs text-sci-green hover:text-sci-bone font-mono transition-colors">
+    <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8">
+      <Link href="/" className="absolute top-4 left-4 sm:top-8 sm:left-8 text-xs text-sci-green hover:text-sci-bone font-mono transition-colors">
         ← BACK TO TERMINAL
       </Link>
       
-      <div className="w-full max-w-md border border-border bg-surface p-8" style={{ clipPath: "var(--clip-corner-md)" }}>
+      <div className="w-full max-w-md border border-border bg-surface p-6 sm:p-8" style={{ clipPath: "var(--clip-corner-md)" }}>
         <div className="mb-8">
           <div className="text-xs text-sci-amber tracking-[0.2em] mb-2 uppercase">
             {mode === 'register' ? 'INITIALIZATION SEQUENCE' : 'AUTHORIZATION REQUIRED'}

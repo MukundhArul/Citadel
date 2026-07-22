@@ -472,7 +472,7 @@ export default function VaultDashboard({
 
   return (
     <div className="flex flex-col gap-8 w-full">
-      <header className="flex justify-between items-end mb-4 border-b border-border pb-4">
+      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-4 border-b border-border pb-4">
         <div>
           <div className="flex items-center gap-3">
             <Logo className="w-6 h-6 text-sci-green" />
@@ -484,7 +484,7 @@ export default function VaultDashboard({
             OPERATOR: {userEmail}
           </div>
         </div>
-        <div className="flex flex-col items-end gap-3">
+        <div className="flex flex-col items-start sm:items-end gap-3 w-full sm:w-auto mt-2 sm:mt-0">
           <form action="/auth/signout" method="post">
             <button type="submit" className="text-xs font-mono text-sci-bone hover:text-sci-red transition-colors tracking-widest uppercase">
               [ TERMINATE SESSION ]

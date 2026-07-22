@@ -43,7 +43,7 @@ export default async function DashboardPage() {
   }
 
   return (
-    <main className="flex-1 flex flex-col p-8 max-w-5xl mx-auto w-full">
+    <main className="flex-1 flex flex-col p-4 sm:p-6 md:p-8 max-w-5xl mx-auto w-full">
       <VaultDashboard 
         userId={user.id} 
         userEmail={user.email ?? "unknown"} 
